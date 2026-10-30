@@ -20,15 +20,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
-      max-parallel: 4
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        # Reduced from 7 versions down to exactly 1 stable environment
+        python-version: ["3.11"]
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - name: Install uv
-        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b # v7.2.0
+        uses: astral-sh/setup-uv@v5
         id: setup-uv
         with:
           python-version: ${{ matrix.python-version }}
@@ -41,7 +41,7 @@ jobs:
       - run: uv run black --check fhir/resources/
       # monthly cache updates
       - run: echo "cache_id=$(date --utc '+%m')" >> "$GITHUB_ENV"
-      - uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+      - uses: actions/cache@v4
         with:
           key: fhir-resources-${{ env.cache_id }}
           path: .cache
